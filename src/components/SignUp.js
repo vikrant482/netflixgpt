@@ -1,7 +1,29 @@
 // src/components/SignUp.jsx
 import Header from "./Header";
+import { validate } from "../utils/validate";
+import { useState, useRef } from "react";
 
 const SignUp = () => {
+
+    const emailRef = useRef(null);
+    const passwordRef = useRef(null);
+    const [errors, setErrors] = useState({});
+
+    const handleSubmit = (e) => {
+         e.preventDefault();
+
+         const email = emailRef.current.value;
+         const password = passwordRef.current.value;
+
+         const validationErrors = validate(email, password);
+        setErrors(validationErrors);
+        
+        if (Object.keys(validationErrors).length === 0) {
+            console.log("Logging in with:", { email, password });
+            // Proceed with login logic
+        }
+    };
+
     return (
         <div className="relative h-screen">
             <Header />
@@ -17,23 +39,27 @@ const SignUp = () => {
 
             {/* Sign-in form */}
             <div className="absolute w-full flex justify-center items-center h-screen z-20">
-                <form className="bg-black bg-opacity-70 text-white p-8 rounded-lg max-w-md w-full space-y-6">
+                <form onSubmit={handleSubmit} className="bg-black bg-opacity-70 text-white p-8 rounded-lg max-w-md w-full space-y-6">
                     <h1 className="text-3xl font-bold">Sign In</h1>
 
                     <div>
                         <input
                             type="email"
+                            ref={emailRef}
                             placeholder="Email or mobile number"
                             className="w-full p-3 rounded bg-gray-700 placeholder-gray-400 focus:outline-none"
                         />
+                        {errors.email && <p className="text-sm text-red-500 mt-1">{errors.email}</p>}
                     </div>
 
                     <div>
                         <input
                             type="password"
+                            ref={passwordRef}
                             placeholder="Password"
                             className="w-full p-3 rounded bg-gray-700 placeholder-gray-400 focus:outline-none"
                         />
+                        {errors.password && <p className="text-sm text-red-500 mt-1">{errors.password}</p>}
                     </div>
 
                     <button className="bg-red-600 hover:bg-red-700 transition w-full py-3 rounded font-semibold">

@@ -2,13 +2,16 @@
 import Header from "./Header";
 import { validate } from "../utils/validate";
 import { useState, useRef } from "react";
+import { getAuth,signInWithEmailAndPassword } from "firebase/auth";
+
+
 
 const SignUp = () => {
 
     const emailRef = useRef(null);
     const passwordRef = useRef(null);
     const [errors, setErrors] = useState({});
-
+   
     const handleSubmit = (e) => {
          e.preventDefault();
 
@@ -18,9 +21,20 @@ const SignUp = () => {
          const validationErrors = validate(email, password);
         setErrors(validationErrors);
         
+        
         if (Object.keys(validationErrors).length === 0) {
-            console.log("Logging in with:", { email, password });
-            // Proceed with login logic
+            const auth = getAuth();
+
+        signInWithEmailAndPassword(auth, email, password)
+        .then((userCredential) => {
+    // Signed in
+         const user = userCredential.user;
+        console.log("Firebase Login Success:", user); // should not be undefined
+         
+         })
+        .catch((error) => {
+      console.error("Login failed:", error.code, error.message);
+        });
         }
     };
 
